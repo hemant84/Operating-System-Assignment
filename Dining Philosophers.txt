@@ -1,0 +1,66 @@
+#include<stdio.h>
+#include<semaphore.h>
+#include<pthread.h>
+ 
+#define N 5
+#define THINKING 0
+#define HUNGRY 1
+#define EATING 2
+#define LEFT (phid+4)%N
+#define RIGHT (phid+1)%N
+ 
+sem_t mutex;
+sem_t S[N];
+ 
+int state[N];
+ 
+
+void *philospher(void *num)
+{
+    while(1)
+    {
+        int *i = num;
+        sleep(1);
+        takefork(*i);
+        sleep(0);
+        putfork(*i);
+    }
+}
+ 
+void takefork(int phid)
+{
+    sem_wait(&mutex);
+    state[phid] = HUNGRY;
+
+    // Critical Section
+
+    test(phid);
+    sem_post(&mutex);
+    sem_wait(&S[phid]);
+    sleep(1);
+}
+ 
+void test(int phid)
+{
+    if (state[phid] == HUNGRY && state[LEFT] != EATING && state[RIGHT] != EATING)
+    {
+        state[phid] = EATING;
+        sleep(2);
+        
+        //Critical Section
+
+        sem_post(&S[phid]);
+    }
+}
+ 
+void putfork(int phid)
+{
+    sem_wait(&mutex);
+    state[phid] = THINKING;
+    
+    //Critical Section
+
+    test(LEFT);
+    test(RIGHT);
+    sem_post(&mutex);
+}

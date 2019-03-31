@@ -1,0 +1,64 @@
+int Tobacco_Paper = 0;
+int Paper_Matches = 0;
+int Matches_Tobacco = 0;
+int Smoked = 1;
+
+void agent() 
+{
+      wait(Smoked);
+      int r = rand() % 3;      // Signal which ever combination was chosen
+
+      switch( r ) {
+            case 0: signal(Tobacco_Paper);
+            break;
+            case 1: signal(Paper_Matches);
+            break;
+            case 2: signal(Matches_Tobacco);
+            break;
+      }
+}
+
+void Smoker_A()
+{
+      while(true) {
+
+            // Wait for the two ingredients
+
+            wait(Tobacco_Paper);
+            smoke();
+
+            // Signal that we're done smoking so the next agent can put down ingredients.
+
+            signal(Smoked);
+      }
+}
+
+void Smoker_B()
+{
+      while(true) {
+      
+            // Wait for the two ingredients
+
+            wait(Tobacco_Paper);
+            smoke();
+
+            // Signal that we're done smoking so the next agent can put down ingredients.
+
+            signal(Smoked);
+      }
+}
+
+void Smoker_C()
+{
+      while(true) {
+      
+            // Wait for the two ingredients
+
+            wait(Matches_Tobacco);
+            smoke();
+
+            // Signal that we're done smoking so the next agent can put down ingredients.
+
+            signal(Smoked);
+      }
+}

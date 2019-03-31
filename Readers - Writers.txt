@@ -1,0 +1,34 @@
+//Initialisation
+
+in = Semaphore(1)
+out = Semaphore(1)
+wrt = Semaphore(0)
+ctrin = Integer(0)
+ctrout = Integer(0)
+wait = Boolean(0) 
+
+//Reader
+
+Wait in
+ctrin++
+Signal in
+[Critical section]
+Wait out
+ctrout++
+if (wait==1 && ctrin==ctrout)
+then Signal wrt
+Signal out 
+
+//Writer
+
+Wait in
+Wait out
+if (ctrin==ctrout)
+then Signal out
+else
+	wait=1
+	Signal out
+	Wait wrt
+	wait=0
+[Critical section]
+Signal in 
